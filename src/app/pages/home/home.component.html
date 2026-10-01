@@ -1,0 +1,787 @@
+<!-- FIXED GLASS NAVBAR -->
+<app-navbar></app-navbar>
+
+<main class="gv-main-wrapper">
+
+  <!-- ========================================================
+       SECTION 1: HERO BANNER (VIDEO 1 BACKGROUND)
+       ======================================================== -->
+  <section id="hero" class="hero-section">
+    <!-- Cinematic Full-Viewport Background Video 1 -->
+    <div class="hero-video-container">
+      <video 
+        #heroVideo
+        class="hero-bg-video" 
+        autoplay 
+        [muted]="true"
+        muted 
+        loop 
+        playsinline
+        preload="auto"
+      >
+        <source src="assets/videos/video1.mp4" type="video/mp4">
+        <source src="assets/videos/video%201.mp4" type="video/mp4">
+        Your browser does not support HTML5 video streaming.
+      </video>
+      <div class="hero-overlay"></div>
+      <div class="hero-architectural-grid"></div>
+    </div>
+
+    <!-- Hero Content -->
+    <div class="gv-container hero-container">
+      <div class="hero-content">
+        <!-- Logo Badge -->
+        <!-- <div class="hero-badge-wrap">
+          <app-gv-logo [compact]="false" [theme]="'dark'"></app-gv-logo>
+        </div> -->
+
+        <!-- Main Heading -->
+        <div class="hero-headings">
+          <span class="hero-eyebrow">GV CONSTRUCTION</span>
+          <h1 class="hero-main-title">
+            BUILDING <br>
+            <span class="gradient-text">THE FUTURE.</span>
+          </h1>
+        </div>
+
+        <!-- Supporting Text -->
+        <p class="hero-subtext">
+          Where vision, engineering and craftsmanship become extraordinary spaces.
+        </p>
+
+        <!-- CTA Actions -->
+        <div class="hero-actions">
+          <button class="btn-gv-primary hero-cta-btn" (click)="scrollTo('scroll-building')">
+            <span>EXPLORE OUR WORK ↓</span>
+          </button>
+          <button class="btn-gv-outline hero-secondary-btn" (click)="scrollTo('contact')">
+            <span>START A PROJECT</span>
+          </button>
+        </div>
+      </div>
+
+      <!-- Bottom Floating Telemetry -->
+      <div class="hero-telemetry">
+        <div class="telemetry-item">
+          <span class="t-dot" [class.pulse]="isHeroVideoPlaying"></span>
+          <span class="t-label">CINEMATIC TIMELAPSE:</span>
+          <span class="t-val">SITE GROUND-UP EXECUTION</span>
+          <button class="hero-video-toggle-btn" (click)="toggleHeroVideo()" [title]="isHeroVideoPlaying ? 'Pause hero video' : 'Play hero video'" [attr.aria-label]="isHeroVideoPlaying ? 'Pause video' : 'Play video'">
+            <span>{{ isHeroVideoPlaying ? '⏸ PAUSE' : '▶ PLAY' }}</span>
+          </button>
+        </div>
+        <div class="scroll-indicator" (click)="scrollTo('scroll-building')">
+          <span class="mouse-icon">
+            <span class="wheel"></span>
+          </span>
+          <span class="scroll-label">SCROLL TO BUILD</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 2: SCROLL BUILDING SECTION (VIDEO 2 SYNCED)
+       ======================================================== -->
+  <section id="scroll-building" class="scroll-building-track" #scrollTrack>
+    <div class="sticky-video-viewport">
+      <!-- Fullscreen Synced Video 2 -->
+      <div class="video-canvas-box">
+        <video 
+          #scrollVideo
+          class="scroll-video-el" 
+          [muted]="true"
+          muted 
+          playsinline
+          preload="auto"
+        >
+          <source src="assets/videos/video2.mp4" type="video/mp4">
+          <source src="assets/videos/video%202.mp4" type="video/mp4">
+        </video>
+        <div class="video-vignette"></div>
+      </div>
+
+      <!-- HUD & Overlaid Content -->
+      <div class="gv-container scroll-hud-container">
+        
+        <!-- Left Side Narrative HUD -->
+        <div class="hud-narrative-panel gv-glass-card">
+          <div class="hud-tag-row">
+            <span class="gv-section-badge badge-red">
+              <span class="badge-dot"></span>
+              SCROLL DRIVEN CONSTRUCTION
+            </span>
+            <span class="progress-pill">{{ displayProgress }}</span>
+          </div>
+
+          <h2 class="hud-main-title">FROM GROUND UP.</h2>
+
+          <div class="hud-body-text">
+            <p class="highlight-line">Every structure starts with a vision.</p>
+            <p>We transform that vision into spaces engineered to stand the test of time.</p>
+          </div>
+
+          <!-- Dynamic Active Stage Card -->
+          <div class="active-stage-card" *ngIf="activeStage">
+            <div class="stage-card-header">
+              <span class="stage-num-lg">{{ activeStage.number }}</span>
+              <div class="stage-title-wrap">
+                <span class="stage-prefix">ACTIVE CONSTRUCTION STAGE</span>
+                <h3 class="stage-title-text">{{ activeStage.title }}</h3>
+              </div>
+            </div>
+            <p class="stage-desc">{{ activeStage.description }}</p>
+
+            <div class="stage-metrics-row">
+              <div class="sm-item" *ngFor="let m of activeStage.metrics | keyvalue">
+                <span class="sm-key">{{ m.key }}</span>
+                <span class="sm-val">{{ m.value }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Interactive Controls & Mode Toggle -->
+          <div class="hud-controls-row">
+            <button class="mode-toggle-btn" (click)="toggleAssemblyMode()">
+              <span class="mode-icon">🔄</span>
+              <span>{{ isAssemblyMode ? 'MODE: ASSEMBLY' : 'MODE: EXPLODED VIEW' }}</span>
+            </button>
+            <button class="demo-btn" (click)="toggleAutoDemo()">
+              <span>{{ isAutoPlaying ? '⏸ PAUSE DEMO' : '▶ AUTO DEMO' }}</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Right Side Construction Stage Timeline -->
+        <div class="hud-timeline-panel">
+          <div class="timeline-header">
+            <span class="th-title">CONSTRUCTION PHASES</span>
+            <span class="th-sub">7 CRITICAL MILESTONES</span>
+          </div>
+
+          <div class="timeline-stepper">
+            <div 
+              *ngFor="let s of stages" 
+              class="stage-step-item"
+              [class.active]="activeStage?.number === s.number"
+              (click)="selectStage(s)"
+            >
+              <div class="step-indicator">
+                <div class="step-bullet"></div>
+                <div class="step-line"></div>
+              </div>
+              <div class="step-content">
+                <span class="step-num">{{ s.number }}</span>
+                <span class="step-name">{{ s.title }}</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Scroll Instruction Prompt -->
+          <div class="timeline-scroll-prompt">
+            <span class="pulse-ring"></span>
+            <span>SCROLL DOWN TO PROGRESS CONSTRUCTION</span>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- Bottom Global Progress Bar -->
+      <div class="scroll-progress-bar-wrap">
+        <div class="scroll-progress-fill" [style.width]="displayProgress"></div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 3: ABOUT GV CONSTRUCTION
+       ======================================================== -->
+  <section id="about" class="about-section architectural-grid" #aboutSection>
+    <div class="gv-container">
+      
+      <!-- Top Section Header -->
+      <div class="about-header-grid">
+        <div class="header-left">
+          <span class="gv-section-badge">
+            <span class="badge-dot"></span>
+            ABOUT GV CONSTRUCTION
+          </span>
+          <h2 class="gv-section-title">
+            BUILT ON VISION. <br>
+            <span class="accent-red">DRIVEN BY PRECISION.</span>
+          </h2>
+        </div>
+        <div class="header-right">
+          <p class="about-lead-text">
+            GV Construction brings together engineering expertise, modern construction practices 
+            and attention to detail to create spaces built for today and prepared for tomorrow.
+          </p>
+          <p class="about-secondary-text">
+            For over fifteen years, we have pushed structural boundaries with millimeter-level 
+            accuracy. From high-tolerance seismic foundations to light-filled architectural glass envelopes, 
+            every square meter we build reflects our unwavering commitment to longevity and craftsmanship.
+          </p>
+        </div>
+      </div>
+
+      <!-- Animated Stats Counters -->
+      <div class="stats-counter-strip">
+        <div class="stat-counter-card gv-glass-card" *ngFor="let st of stats; let i = index">
+          <div class="stat-number-wrap">
+            <span class="stat-value">{{ animatedStatValues[i] }}</span>
+            <span class="stat-suffix">{{ st.suffix }}</span>
+          </div>
+          <h4 class="stat-label">{{ st.label }}</h4>
+          <p class="stat-desc">{{ st.description }}</p>
+        </div>
+      </div>
+
+      <!-- Realistic Engineering Environment Feature Strip -->
+      <div class="about-feature-row">
+        <div class="feature-media-box">
+          <img 
+            src="assets/images/projects/Structural Engineers on construction site.jpg" 
+            alt="Structural Engineers on construction site" 
+            class="feature-img"
+          />
+          <div class="feature-tag-overlay">
+            <span>BIM-DRIVEN EXECUTION</span>
+          </div>
+        </div>
+        <div class="feature-media-box">
+          <img 
+            src="https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&w=800&q=80" 
+            alt="Architectural Construction inspection" 
+            class="feature-img"
+          />
+          <div class="feature-tag-overlay">
+            <span>MILLIMETER PRECISION TOLERANCE</span>
+          </div>
+        </div>
+        <div class="feature-media-box">
+          <img 
+            src="https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?auto=format&fit=crop&w=800&q=80" 
+            alt="Completed architectural glass commercial project" 
+            class="feature-img"
+          />
+          <div class="feature-tag-overlay">
+            <span>SUSTAINABLE LEED CERTIFIED</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 4: SERVICES (WHAT WE BUILD)
+       ======================================================== -->
+  <section id="services" class="services-section">
+    <div class="gv-container">
+      
+      <!-- Section Header -->
+      <div class="section-heading-centered">
+        <span class="gv-section-badge badge-red">
+          <span class="badge-dot"></span>
+          OUR CAPABILITIES
+        </span>
+        <h2 class="gv-section-title">WHAT WE BUILD</h2>
+        <p class="gv-section-subtitle">
+          Engineered solutions engineered to deliver exceptional structural performance, 
+          enduring aesthetic beauty, and seamless execution.
+        </p>
+      </div>
+
+      <!-- Services Grid -->
+      <div class="services-grid">
+        <div class="service-card gv-glass-card" *ngFor="let s of services">
+          <div class="card-top-row">
+            <span class="service-number">{{ s.number }}</span>
+            <span class="service-icon-node">✦</span>
+          </div>
+
+          <h3 class="service-title">{{ s.title }}</h3>
+          <p class="service-tagline">{{ s.tagline }}</p>
+          <p class="service-description">{{ s.description }}</p>
+
+          <div class="service-features-list">
+            <div class="feature-pill" *ngFor="let f of s.features">
+              <span class="pill-dot"></span>
+              <span>{{ f }}</span>
+            </div>
+          </div>
+
+          <div class="service-card-footer">
+            <button class="service-learn-btn" (click)="scrollTo('contact')">
+              <span>CONSULT OUR ENGINEERS</span>
+              <span class="arrow">→</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 5: PROJECTS (OUR PROJECTS)
+       ======================================================== -->
+  <section id="projects" class="projects-section architectural-grid">
+    <div class="gv-container">
+      
+      <!-- Header with Filter Controls -->
+      <div class="projects-header-bar">
+        <div>
+          <span class="gv-section-badge">
+            <span class="badge-dot"></span>
+            PORTFOLIO
+          </span>
+          <h2 class="gv-section-title">OUR PROJECTS</h2>
+        </div>
+
+        <!-- Category Filters -->
+        <div class="category-filter-nav">
+          <button 
+            *ngFor="let cat of categories" 
+            class="filter-pill-btn"
+            [class.active]="selectedCategory === cat"
+            (click)="filterCategory(cat)"
+          >
+            {{ cat }}
+          </button>
+        </div>
+      </div>
+
+      <!-- Projects Grid -->
+      <div class="projects-grid">
+        <div class="project-card" *ngFor="let p of filteredProjects">
+          <!-- Card Image with Hover Zoom -->
+          <div class="project-img-wrapper" (click)="openProjectModal(p)">
+            <img [src]="p.imageUrl" [alt]="p.name" class="project-card-img" loading="lazy" />
+            <div class="card-gradient-overlay"></div>
+            
+            <div class="floating-badge-top">
+              <span class="category-pill">{{ p.category }}</span>
+              <span class="year-pill">{{ p.year }}</span>
+            </div>
+
+            <div class="card-hover-prompt">
+              <span>VIEW PROJECT DETAILS</span>
+              <span class="arrow">↗</span>
+            </div>
+          </div>
+
+          <!-- Card Content Body -->
+          <div class="project-card-body">
+            <div class="card-location">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/>
+                <circle cx="12" cy="10" r="3"/>
+              </svg>
+              <span>{{ p.location }}</span>
+            </div>
+
+            <h3 class="project-card-title">{{ p.name }}</h3>
+            <p class="project-card-desc">{{ p.description }}</p>
+
+            <div class="card-footer-row">
+              <div class="spec-info">
+                <span class="spec-label">AREA</span>
+                <span class="spec-val">{{ p.area }}</span>
+              </div>
+              <button class="btn-gv-outline btn-sm" (click)="openProjectModal(p)">
+                <span>VIEW PROJECT</span>
+                <span class="arrow">→</span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 6: OUR PROCESS (FROM IDEA TO REALITY)
+       ======================================================== -->
+  <section id="process" class="process-section">
+    <div class="gv-container">
+      
+      <!-- Section Header -->
+      <div class="section-heading-centered">
+        <span class="gv-section-badge badge-red">
+          <span class="badge-dot"></span>
+          SYSTEMATIC METHODOLOGY
+        </span>
+        <h2 class="gv-section-title">FROM IDEA TO REALITY</h2>
+        <p class="gv-section-subtitle">
+          Our 5-phase engineering lifecycle ensures flawless coordination, zero budget surprises, 
+          and structural perfection from breaking ground to final key handover.
+        </p>
+      </div>
+
+      <!-- Process Steps Interactive Carousel / Grid -->
+      <div class="process-steps-track">
+        <div 
+          *ngFor="let ps of processSteps; let idx = index" 
+          class="process-card gv-glass-card"
+          [class.active-step]="activeProcessStep === idx"
+          (click)="selectProcessStep(idx)"
+        >
+          <div class="process-step-badge">
+            <span class="step-number">{{ ps.step }}</span>
+            <span class="step-duration">{{ ps.duration }}</span>
+          </div>
+
+          <h3 class="step-main-title">{{ ps.title }}</h3>
+          <p class="step-subtitle">{{ ps.subtitle }}</p>
+          <p class="step-description">{{ ps.description }}</p>
+
+          <div class="step-deliverables-box">
+            <span class="del-heading">KEY DELIVERABLES:</span>
+            <ul class="del-list">
+              <li *ngFor="let d of ps.deliverables">
+                <span class="bullet">▪</span> {{ d }}
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 7: WHY GV CONSTRUCTION
+       ======================================================== -->
+  <section id="why-gv" class="why-section architectural-grid">
+    <div class="gv-container">
+      
+      <div class="section-heading-centered">
+        <span class="gv-section-badge">
+          <span class="badge-dot"></span>
+          OUR COMMITMENT
+        </span>
+        <h2 class="gv-section-title">WHY GV CONSTRUCTION</h2>
+        <p class="gv-section-subtitle">
+          Built on a foundation of uncompromised engineering standards, transparent partnerships, 
+          and disciplined craftsmanship.
+        </p>
+      </div>
+
+      <div class="why-grid">
+        <div class="why-card gv-glass-card" *ngFor="let wf of whyFeatures">
+          <div class="why-icon-node">
+            <span class="node-symbol">❖</span>
+          </div>
+          <h3 class="why-title">{{ wf.title }}</h3>
+          <p class="why-tagline">{{ wf.tagline }}</p>
+          <p class="why-desc">{{ wf.description }}</p>
+          <div class="why-accent-line"></div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 8: STATISTICS & SAFETY METRICS
+       ======================================================== -->
+  <section class="metrics-banner-section">
+    <div class="gv-container">
+      <div class="metrics-banner-grid gv-glass-card">
+        <div class="metric-block">
+          <span class="m-val">2.5M+</span>
+          <span class="m-label">SQUARE FEET DELIVERED</span>
+        </div>
+        <div class="metric-block">
+          <span class="m-val highlight-green">0</span>
+          <span class="m-label">LOST-TIME INCIDENTS</span>
+        </div>
+        <div class="metric-block">
+          <span class="m-val">100%</span>
+          <span class="m-label">ON-TIME HANDOVER RECORD</span>
+        </div>
+        <div class="metric-block">
+          <span class="m-val highlight-cyan">10-YR</span>
+          <span class="m-label">COMPREHENSIVE WARRANTY</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 9: TESTIMONIALS
+       ======================================================== -->
+  <section class="testimonials-section">
+    <div class="gv-container">
+      
+      <div class="section-heading-centered">
+        <span class="gv-section-badge badge-red">
+          <span class="badge-dot"></span>
+          CLIENT VOICES
+        </span>
+        <h2 class="gv-section-title">TRUSTED BY INDUSTRY LEADERS</h2>
+        <p class="gv-section-subtitle">
+          What our visionary commercial and residential clients say about partnering with GV Construction.
+        </p>
+      </div>
+
+      <div class="testimonials-grid">
+        <div class="testimonial-card gv-glass-card" *ngFor="let t of testimonials">
+          <div class="rating-stars">
+            <span *ngFor="let star of [1,2,3,4,5]">★</span>
+          </div>
+
+          <p class="testimonial-quote">"{{ t.quote }}"</p>
+
+          <div class="testimonial-author-row">
+            <img [src]="t.avatarUrl" [alt]="t.author" class="author-avatar"/>
+            <div class="author-meta">
+              <strong class="author-name">{{ t.author }}</strong>
+              <span class="author-role">{{ t.role }} · {{ t.organization }}</span>
+              <span class="project-ref">Project: {{ t.project }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 10: CALL TO ACTION (CTA)
+       ======================================================== -->
+  <section class="cta-section architectural-grid">
+    <div class="gv-container">
+      <div class="cta-banner gv-glass-card">
+        <div class="cta-content">
+          <span class="gv-section-badge badge-red">
+            <span class="badge-dot"></span>
+            TRANSFORM YOUR VISION
+          </span>
+
+          <h2 class="cta-title">
+            HAVE A VISION? <br>
+            <span class="accent-red">LET'S BUILD IT.</span>
+          </h2>
+
+          <p class="cta-text">
+            Tell us what you're planning. We'll help turn it into reality. 
+            Speak directly with our chartered structural engineers and project planners.
+          </p>
+
+          <div class="cta-buttons-row">
+            <button class="btn-gv-primary cta-main-btn" (click)="scrollTo('contact')">
+              <span>START A PROJECT</span>
+              <span class="arrow">→</span>
+            </button>
+            <button class="btn-gv-outline cta-sub-btn" (click)="scrollTo('projects')">
+              <span>VIEW PROJECTS</span>
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ========================================================
+       SECTION 11: CONTACT
+       ======================================================== -->
+  <section id="contact" class="contact-section">
+    <div class="gv-container">
+      
+      <div class="contact-layout-grid">
+        <!-- Left Column: Direct Info -->
+        <div class="contact-info-col">
+          <span class="gv-section-badge">
+            <span class="badge-dot"></span>
+            GET IN TOUCH
+          </span>
+          <h2 class="gv-section-title">
+            LET'S BUILD <br>
+            <span class="accent-blue">SOMETHING GREAT.</span>
+          </h2>
+          
+          <p class="contact-bio-lead">
+            Whether you are planning a high-rise corporate headquarters, an architectural residence, 
+            or an industrial logistics facility, our team brings millimeter precision to your blueprint.
+          </p>
+
+          <div class="contact-direct-cards">
+            <div class="direct-card gv-glass-card">
+              <div class="card-icon">📍</div>
+              <div>
+                <h4>Main Office</h4>
+                <p>Plot No. 42, Architectural Corridor, OMR, Chennai, Tamil Nadu — 600096, India</p>
+              </div>
+            </div>
+
+            <div class="direct-card gv-glass-card">
+              <div class="card-icon">📞</div>
+              <div>
+                <h4>Call Our Team / WhatsApp</h4>
+                <p>
+                  +91 (044) 4892 1100 / 
+                  <a href="https://wa.me/919876543210" target="_blank" rel="noopener" style="color: var(--gv-cyan-400); text-decoration: underline; font-weight: 600;">
+                    +91 98765 43210 💬
+                  </a>
+                </p>
+                <span class="sub-hours">Mon - Sat: 9:00 AM – 7:00 PM IST · Direct WhatsApp Support</span>
+              </div>
+            </div>
+
+            <div class="direct-card gv-glass-card">
+              <div class="card-icon">✉️</div>
+              <div>
+                <h4>Email Inquiries</h4>
+                <p>contact&#64;gvconstruction.com</p>
+                <span class="sub-hours">Tender Inquiries: tenders&#64;gvconstruction.com</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right Column: Enquiry Form -->
+        <div class="contact-form-col">
+          <div class="enquiry-card gv-glass-card">
+            
+            <!-- Success Confirmation -->
+            <div class="submission-success" *ngIf="contactModel.submitted">
+              <div class="success-icon">✓</div>
+              <h3>ENQUIRY RECEIVED</h3>
+              <p>
+                Thank you, <strong>{{ contactModel.name }}</strong>! We've opened WhatsApp to connect you directly with our engineering team.
+              </p>
+              <div class="success-actions-row">
+                <a [href]="lastWhatsappUrl" target="_blank" rel="noopener" class="btn-gv-primary whatsapp-chat-btn">
+                  <span>OPEN IN WHATSAPP</span>
+                  <span class="btn-icon">💬</span>
+                </a>
+                <button class="btn-gv-outline" (click)="resetContactForm()">
+                  <span>SUBMIT ANOTHER ENQUIRY</span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Active Form -->
+            <form *ngIf="!contactModel.submitted" (ngSubmit)="submitEnquiry()" #form="ngForm" class="enquiry-form">
+              <h3 class="form-title">PROJECT SPECIFICATION FORM</h3>
+
+              <!-- Name -->
+              <div class="form-field">
+                <label for="name">Your Name *</label>
+                <input 
+                  type="text" 
+                  id="name" 
+                  name="name" 
+                  [(ngModel)]="contactModel.name" 
+                  placeholder="e.g. John Doe / Rajesh Kumar" 
+                  required
+                />
+              </div>
+
+              <!-- Email & Phone -->
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="email">Email Address</label>
+                  <input 
+                    type="email" 
+                    id="email" 
+                    name="email" 
+                    [(ngModel)]="contactModel.email" 
+                    placeholder="name@company.com" 
+                  />
+                </div>
+                <div class="form-field">
+                  <label for="phone">Phone / WhatsApp Number</label>
+                  <input 
+                    type="tel" 
+                    id="phone" 
+                    name="phone" 
+                    [(ngModel)]="contactModel.phone" 
+                    placeholder="+91 98765 43210" 
+                  />
+                </div>
+              </div>
+
+              <!-- Project Type & Location -->
+              <div class="form-row">
+                <div class="form-field">
+                  <label for="projectType">Project Type</label>
+                  <select id="projectType" name="projectType" [(ngModel)]="contactModel.projectType">
+                    <option value="Commercial">Commercial Construction</option>
+                    <option value="Residential">Residential Construction</option>
+                    <option value="Industrial">Industrial Logistics Hub</option>
+                    <option value="Renovation">Renovation & Restoration</option>
+                    <option value="Turnkey">Turnkey Design & Build</option>
+                  </select>
+                </div>
+                <div class="form-field">
+                  <label for="projectLocation">Project Location</label>
+                  <input 
+                    type="text" 
+                    id="projectLocation" 
+                    name="projectLocation" 
+                    [(ngModel)]="contactModel.projectLocation" 
+                    placeholder="e.g. Chennai, Bangalore, Hyderabad" 
+                  />
+                </div>
+              </div>
+
+              <!-- Project Description -->
+              <div class="form-field">
+                <label for="description">Project Description & Timeline</label>
+                <textarea 
+                  id="description" 
+                  name="description" 
+                  rows="4" 
+                  [(ngModel)]="contactModel.description" 
+                  placeholder="Tell us about the site area, built-up square footage, proposed schedule, and key requirements..."
+                ></textarea>
+              </div>
+
+              <!-- Validation Error Warning -->
+              <div *ngIf="validationError" class="form-error-msg">
+                ⚠️ {{ validationError }}
+              </div>
+
+              <!-- Submit Action Button -->
+              <button 
+                type="button" 
+                (click)="submitEnquiry()"
+                class="btn-gv-primary form-submit-btn" 
+              >
+                <span>SEND ENQUIRY VIA WHATSAPP</span>
+                <span class="arrow">💬 →</span>
+              </button>
+            </form>
+
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+</main>
+
+<!-- FOOTER -->
+<app-footer></app-footer>
+
+<!-- PROJECT DETAILS MODAL -->
+<app-project-modal 
+  [project]="selectedProject" 
+  (closeRequested)="closeProjectModal()"
+  (consultRequested)="handleModalConsult($event)"
+></app-project-modal>

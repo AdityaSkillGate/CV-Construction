@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 600 140" width="600" height="140" fill="none">
+  <defs>
+    <linearGradient id="blueGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#00B4D8" />
+      <stop offset="100%" stop-color="#0077B6" />
+    </linearGradient>
+    <filter id="glow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="2" stdDeviation="4" flood-color="#000000" flood-opacity="0.5"/>
+    </filter>
+  </defs>
+
+  <g transform="translate(24, 14)" filter="url(#glow)">
+    <!-- Monogram Symbol -->
+    <g transform="scale(2)">
+      <!-- Outer Hexagonal / Architectural Frame -->
+      <path d="M28 4L52 18V44L28 54L4 44V18L28 4Z" stroke="url(#blueGrad)" stroke-width="2.5" fill="#061224" />
+      
+      <!-- Stylized 'G' in Pure White -->
+      <path d="M28 12C20 12 14 17 14 28C14 39 20 44 28 44C34 44 39 40 40 34H28" 
+            stroke="#FFFFFF" stroke-width="3" stroke-linecap="square" />
+      <!-- Red Construction Accent Bar -->
+      <path d="M28 28H42V35" stroke="#E63946" stroke-width="3.5" stroke-linecap="square" />
+
+      <!-- Dynamic 'V' Chevron in Brand Red -->
+      <path d="M20 20L28 36L36 20" stroke="#E63946" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+      
+      <!-- Cyan Core Engineering Node -->
+      <circle cx="28" cy="36" r="2.5" fill="#00B4D8" />
+    </g>
+
+    <!-- Brand Typography -->
+    <g transform="translate(130, 0)">
+      <!-- 'GV' -->
+      <text x="0" y="52" fill="#FFFFFF" font-family="'Syne', 'Montserrat', -apple-system, sans-serif" font-size="46" font-weight="900" letter-spacing="2">GV</text>
+      <!-- Accent Dot in Red -->
+      <circle cx="78" y="44" r="5.5" fill="#E63946" />
+      <!-- 'CONSTRUCTION' -->
+      <text x="2" y="86" fill="#CBD5E1" font-family="'Space Grotesk', 'Roboto Mono', monospace" font-size="18" font-weight="700" letter-spacing="7">CONSTRUCTION</text>
+      <!-- Subtle Underline Accent -->
+      <line x1="2" y1="96" x2="230" y2="96" stroke="#0077B6" stroke-width="2" stroke-opacity="0.6"/>
+      <line x1="230" y1="96" x2="280" y2="96" stroke="#E63946" stroke-width="2"/>
+    </g>
+  </g>
+</svg>
